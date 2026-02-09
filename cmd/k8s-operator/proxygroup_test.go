@@ -1348,12 +1348,13 @@ func TestKubeAPIServerType_DoesNotOverwriteServicesConfig(t *testing.T) {
 		Build()
 
 	reconciler := &ProxyGroupReconciler{
-		tsNamespace:  tsNamespace,
-		tsProxyImage: testProxyImage,
-		Client:       fc,
-		log:          zap.Must(zap.NewDevelopment()).Sugar(),
-		tsClient:     &fakeTSClient{},
-		clock:        tstest.NewClock(tstest.ClockOpts{}),
+		tsNamespace:       tsNamespace,
+		tsProxyImage:      testProxyImage,
+		Client:            fc,
+		log:               zap.Must(zap.NewDevelopment()).Sugar(),
+		tsClient:          &fakeTSClient{},
+		clock:             tstest.NewClock(tstest.ClockOpts{}),
+		authKeyRateLimits: make(map[string]*rate.Limiter),
 	}
 
 	pg := &tsapi.ProxyGroup{
