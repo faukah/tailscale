@@ -871,7 +871,7 @@ func TestContainerBoot(t *testing.T) {
 						WantKubeSecret: map[string]string{
 							kubetypes.KeyCapVer:     capver,
 							"foo":                   "bar",
-							kubetypes.KeyDeviceFQDN: "test-node.test.ts.net",
+							kubetypes.KeyDeviceFQDN: "test-node.test.ts.net.",
 							kubetypes.KeyDeviceID:   "myID",
 							kubetypes.KeyDeviceIPs:  `["100.64.0.1"]`,
 						},
