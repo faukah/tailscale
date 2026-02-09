@@ -178,7 +178,7 @@ type CapabilityVersion int
 //   - 129: 2025-10-04: Fixed sleep/wake deadlock in magicsock when using peer relay (PR #17449)
 //   - 130: 2025-10-06: client can send key.HardwareAttestationPublic and key.HardwareAttestationKeySignature in MapRequest
 //   - 131: 2025-11-25: client respects [NodeAttrDefaultAutoUpdate]
-const CurrentCapabilityVersion CapabilityVersion = 131
+const CurrentCapabilityVersion CapabilityVersion = 132
 
 // ID is an integer ID for a user, node, or login allocated by the
 // control plane.
@@ -280,6 +280,13 @@ type UserProfile struct {
 	LoginName     string // "alice@smith.com"; for display purposes only (provider is not listed)
 	DisplayName   string // "Alice Smith"
 	ProfilePicURL string `json:",omitzero"`
+
+	// Groups contains group identifiers for any group that this user is
+	// a part of and that the coordination server is configured to tell
+	// your node about. (Thus, it may be empty or incomplete.)
+	// There's no semantic difference between a nil and an empty list.
+	// The list is always sorted.
+	Groups []string `json:",omitempty"`
 }
 
 func (p *UserProfile) Equal(p2 *UserProfile) bool {
@@ -292,7 +299,8 @@ func (p *UserProfile) Equal(p2 *UserProfile) bool {
 	return p.ID == p2.ID &&
 		p.LoginName == p2.LoginName &&
 		p.DisplayName == p2.DisplayName &&
-		p.ProfilePicURL == p2.ProfilePicURL
+		p.ProfilePicURL == p2.ProfilePicURL &&
+		(len(p.Groups) == 0 && len(p2.Groups) == 0 || reflect.DeepEqual(p.Groups, p2.Groups))
 }
 
 // RawMessage is a raw encoded JSON value. It implements Marshaler and
