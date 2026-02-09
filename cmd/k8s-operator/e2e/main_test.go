@@ -60,6 +60,23 @@ func createAndCleanup(t *testing.T, cl client.Client, obj client.Object) {
 	})
 }
 
+func createAndCleanupErr(t *testing.T, cl client.Client, obj client.Object) error {
+	t.Helper()
+
+	err := cl.Create(t.Context(), obj)
+	if err != nil {
+		return err
+	}
+
+	t.Cleanup(func() {
+		if err = cl.Delete(t.Context(), obj); err != nil {
+			t.Errorf("error cleaning up %s %s/%s: %s", obj.GetObjectKind().GroupVersionKind(), obj.GetNamespace(), obj.GetName(), err)
+		}
+	})
+
+	return nil
+}
+
 func get(ctx context.Context, cl client.Client, obj client.Object) error {
 	return cl.Get(ctx, client.ObjectKeyFromObject(obj), obj)
 }
